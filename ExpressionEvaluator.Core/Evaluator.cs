@@ -8,6 +8,33 @@ public class Evaluator
         return EvaluatePostfix(postfix);
     }
 
+    private static double EvaluatePostfix(string postfix)
+    {
+        var stack = new Stack<double>();
+        foreach (char item in postfix)
+        {
+            if (IsOperator(item))
+            {
+                var b = stack.Pop();
+                var a = stack.Pop();
+                stack.Push(item switch
+                {
+                    '+' => a + b,
+                    '-' => a - b,
+                    '*' => a * b,
+                    '/' => a / b,
+                    '^' => Math.Pow(a, b),
+                    _ => throw new Exception("Sintax error."),
+                });
+            }
+            else
+            {
+                stack.Push(double.Parse(item.ToString()));
+            }
+        }
+        return stack.Pop();
+    }
+
     private static string InfixToPostfix(string infix)
     {
         var postFix = string.Empty;
@@ -23,6 +50,7 @@ public class Evaluator
                 else
                 {
                     if (item == ')')
+
                     {
                         do
                         {
@@ -56,16 +84,7 @@ public class Evaluator
         return postFix;
     }
 
-    private static int PriorityStack(char item) => item switch
-    {
-        '^' => 3,
-        '*' => 2,
-        '/' => 2,
-        '+' => 1,
-        '-' => 1,
-        '(' => 0,
-        _ => throw new Exception("Sintax error."),
-    };
+    private static bool IsOperator(char item) => "+-*/^()".Contains(item);
 
     private static int PriorityInfix(char item) => item switch
     {
@@ -78,32 +97,14 @@ public class Evaluator
         _ => throw new Exception("Sintax error."),
     };
 
-    private static double EvaluatePostfix(string postfix)
+    private static int PriorityStack(char item) => item switch
     {
-        var stack = new Stack<double>();
-        foreach (char item in postfix)
-        {
-            if (IsOperator(item))
-            {
-                var b = stack.Pop();
-                var a = stack.Pop();
-                stack.Push(item switch
-                {
-                    '+' => a + b,
-                    '-' => a - b,
-                    '*' => a * b,
-                    '/' => a / b,
-                    '^' => Math.Pow(a, b),
-                    _ => throw new Exception("Sintax error."),
-                });
-            }
-            else
-            {
-                stack.Push(double.Parse(item.ToString()));
-            }
-        }
-        return stack.Pop();
-    }
-
-    private static bool IsOperator(char item) => "+-*/^()".Contains(item);
+        '^' => 3,
+        '*' => 2,
+        '/' => 2,
+        '+' => 1,
+        '-' => 1,
+        '(' => 0,
+        _ => throw new Exception("Sintax error."),
+    };
 }
